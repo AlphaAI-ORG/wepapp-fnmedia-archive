@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "backend"
+version = "1.0.0"
+description = "fnmedia search engine web application backend source code"
+authors = ["Yang-Hyun-Jun <sugumy@naver.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
