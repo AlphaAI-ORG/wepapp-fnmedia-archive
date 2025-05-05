@@ -1,0 +1,121 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Document Archive Web Application (Frontend)
+
+This project is a document archive web application built with React, TypeScript, and Tailwind CSS.  
+Users can browse documents by year or search for specific content using a built-in search engine.
+
+---
+
+## Project Structure Overview
+
+The codebase is modularized into pages and components, providing clear separation of concerns.  
+The main layout is composed of a sidebar, header, content area, and document viewer.
+
+---
+
+## Main Files and Responsibilities
+
+### 1. `src/App.tsx`
+
+- Root entry point of the application
+- Initializes `QueryClient` for data fetching
+- Sets up global UI providers such as `TooltipProvider` and `Toaster`
+- Renders the main page using routing
+
+### 2. `src/pages/Index.tsx`
+
+- Main page layout of the application
+- Manages application state:
+  - `selectedYear`: currently selected document year
+  - `showSidebar`: visibility of the sidebar
+  - `searchQuery`: current search term
+  - `activeView`: current view mode (`documents`, `search`, `home`)
+  - `selectedDocument`: currently selected document
+- Composes major UI components:
+  - `Header`, `Sidebar`, `ContentArea`, `SearchResults`, `DocumentViewer`
+- Includes handler functions for year selection, sidebar toggle, and search
+
+### 3. `src/components/Header.tsx`
+
+- Top navigation bar
+- Contains buttons for home, documents, search, and sidebar toggle
+- Displays company logo at the center
+
+### 4. `src/components/Sidebar.tsx`
+
+- Left-side panel listing documents by year (1965–1995)
+- Includes a title filter input
+- Allows users to select a year
+
+### 5. `src/components/ContentArea.tsx`
+
+- Main content display area
+- If no year is selected, shows the introductory home page
+- If a year is selected, displays the document for that year
+
+### 6. `src/components/SearchResults.tsx`
+
+- Displays search interface and results
+- Before search: shows example keywords and instructions
+- After search: displays a list of results including:
+  - Year, title, category, preview, and similarity score
+- Clicking a result shows the document in `DocumentViewer`
+
+### 7. `src/components/DocumentViewer.tsx`
+
+- Displays the full document content
+- Shows placeholder message if no document is selected
+- Displays:
+  - Document title, year, and category
+  - Content by paragraphs
+  - Highlights matched paragraphs with a yellow background
+
+### 8. UI Components (`src/components/ui/`)
+
+- Reusable UI components (buttons, inputs, scroll areas)
+- Built using the `shadcn/ui` library
+
+---
+
+## Data Flow and Core Features
+
+### Document Navigation
+
+1. User selects a year in `Sidebar`
+2. `Index.tsx` updates the `selectedYear` state
+3. `ContentArea` displays the selected year's document
+
+### Search Functionality
+
+1. User clicks the search icon in `Header`
+2. View mode switches to `search`
+3. User enters keyword and triggers search
+4. `SearchResults` displays matching documents
+5. User clicks a result to view it in `DocumentViewer` with paragraph highlighting
+
+### Sidebar Toggle
+
+- Clicking the toggle button in `Header` shows or hides the sidebar
+
+---
+
+## State Management Summary
+
+| Variable           | Description                              |
+|--------------------|------------------------------------------|
+| `selectedYear`     | Currently selected year                  |
+| `showSidebar`      | Whether the sidebar is visible          |
+| `searchQuery`      | Current input in search box             |
+| `activeView`       | Current view (`home`, `documents`, `search`) |
+| `selectedDocument` | Currently selected document             |
+
+---
+
+
+## Summary
+
+This frontend application provides an intuitive interface to access and explore archived documents. Users can browse documents by year or use a keyword-based search system to find relevant content. The design emphasizes usability, speed, and clarity in accessing document data.
