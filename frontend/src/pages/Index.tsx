@@ -97,7 +97,7 @@ const Index = () => {
             <ContentArea sidebarOpen={sidebarOpen} />
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400">
-              Select a document from the sidebar
+              Search and Select a document from the sidebar
             </div>
           )}
         </div>
