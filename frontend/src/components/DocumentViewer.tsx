@@ -1,19 +1,9 @@
-
 import { FileText } from "lucide-react";
+import { DocumentItem } from "../types/document";
 
-interface SearchResult {
-  id: number;
-  year: number;
-  title: string;
-  category: string;
-  preview: string;
-  similarity: number;
-  content?: string;
-  highlightedParagraph?: string;
-}
 
 interface DocumentViewerProps {
-  document: SearchResult | null;
+  document: DocumentItem | null;
 }
 
 const DocumentViewer = ({ document }: DocumentViewerProps) => {
@@ -27,14 +17,14 @@ const DocumentViewer = ({ document }: DocumentViewerProps) => {
 
   const renderContent = () => {
     if (!document.content) return null;
-    
+
     const paragraphs = document.content.split('\n\n');
     return paragraphs.map((paragraph, index) => {
+      // Document View에서 Highlight Paragraph 포함 시, 노란 영역으로 표시
       if (document.highlightedParagraph && paragraph.includes(document.highlightedParagraph)) {
-        // Find the index of the highlighted paragraph within this paragraph
         const start = paragraph.indexOf(document.highlightedParagraph);
         const end = start + document.highlightedParagraph.length;
-        
+
         if (start !== -1) {
           return (
             <div key={index} className="mb-6">
@@ -60,11 +50,9 @@ const DocumentViewer = ({ document }: DocumentViewerProps) => {
       <div className="max-w-[800px] mx-auto py-8 px-4">
         <div className="flex items-center mb-6">
           <FileText className="h-6 w-6 mr-3 text-gray-700" />
-          <h1 className="text-3xl font-bold text-gray-800">{document.year} {document.title}</h1>
+          <h1 className="text-3xl font-bold text-gray-800">{document.title}</h1>
         </div>
-        
-        <div className="text-sm text-sky-500 font-medium mb-4">{document.category}</div>
-        
+
         <div className="max-w-none leading-relaxed text-gray-800 space-y-2">
           {renderContent()}
         </div>

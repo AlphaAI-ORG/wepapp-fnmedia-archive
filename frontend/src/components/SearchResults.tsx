@@ -2,28 +2,19 @@ import { FileText, Search } from "lucide-react";
 import { ScrollArea } from "./ui/scroll-area";
 import { Input } from "./ui/input";
 import { useState, useEffect } from "react";
+import { DocumentItem } from "../types/document";
 
-interface SearchResult {
-  id: number;
-  year: number;
-  title: string;
-  category: string;
-  preview: string;
-  similarity: number;
-  content?: string;
-  highlightedParagraph?: string;
-}
 
 interface SearchResultsProps {
   isVisible: boolean;
   query: string;
   setQuery: (query: string) => void;
-  onResultClick: (result: SearchResult) => void;
+  onResultClick: (result: DocumentItem) => void;
 }
 
 const SearchResults = ({ isVisible, query, setQuery, onResultClick }: SearchResultsProps) => {
   const [hasSearched, setHasSearched] = useState(false);
-  
+
   // Reset hasSearched when query is cleared
   useEffect(() => {
     if (query === '') {
@@ -32,12 +23,11 @@ const SearchResults = ({ isVisible, query, setQuery, onResultClick }: SearchResu
   }, [query]);
 
   // Mock data that matches the image
-  const searchResults: SearchResult[] = [
+  const searchResults: DocumentItem[] = [
     {
       id: 1,
-      year: 1966,
-      title: "Letter",
-      category: "New Products",
+      title: "1998 Letter",
+      url: "/media/documents/letter.pdf",
       preview: "The growth of our Home Fabrics Division over the past few years is, in large part, due to our development of both new products and new...",
       similarity: 0.843,
       content: `To the Shareholders of
@@ -93,9 +83,8 @@ and efforts have helped to make this year successful.`,
     },
     {
       id: 2,
-      year: 1968,
-      title: "Letter",
-      category: "Textile Operations",
+      title: "1968 Letter",
+      url: "/media/documents/letter.pdf",
       preview: "Sales volume increased about 14% with good gains in both Home Fabrics and Menswear Linings. Over the years, these have been our...",
       similarity: 0.763,
       content: `To the Shareholders of
@@ -115,9 +104,8 @@ All divisions currently have substantial backlogs of unfilled orders, and we ant
     },
     {
       id: 3,
-      year: 1967,
-      title: "Letter",
-      category: "Sales",
+      title: "1967 Letter",
+      url: "/media/documents/letter.pdf",
       preview: "Total sales showed a decline from $49.4 million in fiscal 1966 to $39 million in fiscal 1967. The cause of the drop in dollar volume...",
       similarity: 0.720,
       content: `To the Shareholders of
@@ -135,62 +123,6 @@ During the year, we completed the liquidation of our unprofitable plants as plan
 We anticipate that the coming year will show continued improvement in profitability as we benefit from the full effect of our restructuring efforts.`,
       highlightedParagraph: "Total sales showed a decline from $49.4 million in fiscal 1966 to $39 million in fiscal 1967. The cause of the drop in dollar volume was primarily due to our strategic decision to exit certain unprofitable product lines."
     },
-    {
-      id: 4,
-      year: 1975,
-      title: "Letter",
-      category: "Textile Operations",
-      preview: "On April 28, 1975 we acquired Waumbec Mills Incorporated and Waumbec Dyeing and Finishing Co., Inc. located in Manchester, Ne...",
-      similarity: 0.714
-    },
-    {
-      id: 5,
-      year: 1966,
-      title: "Letter",
-      category: "Sales",
-      preview: "Although total sales of $49.4 million were very close to last years, there were significant changes in the product mix. The Synthetic...",
-      similarity: 0.709
-    },
-    {
-      id: 6,
-      year: 1970,
-      title: "Letter", 
-      category: "Textile Operations",
-      preview: "Sales in both menswear linings and home fabrics declined significantly during the year. Thus we were continuously forced to modify...",
-      similarity: 0.707
-    },
-    {
-      id: 7,
-      year: 1980,
-      title: "Letter",
-      category: "Textile and Retail Operations",
-      preview: "Our remaining textile operation, still sizable, has been divided into a manufacturing and a sales division, each free to do business...",
-      similarity: 0.702
-    },
-    {
-      id: 8,
-      year: 1966,
-      title: "Letter",
-      category: "MAINTENANCE OF FINANCIAL CONDITION",
-      preview: "A second area in which substantial investment may be necessary is our fast-growing Home Fabrics Division. Home Fabri...",
-      similarity: 0.375
-    },
-    {
-      id: 9,
-      year: 1999,
-      title: "Letter",
-      category: "Acquisitions of 1999",
-      preview: "Each of our furniture operations is number one in its territory. We now sell more furniture than anyone else in Massachusetts, New...",
-      similarity: 0.357
-    },
-    {
-      id: 10,
-      year: 1965,
-      title: "Letter",
-      category: "To the Stockholders of <br/> Berkshire...",
-      preview: "The Corporation is continuing to operate King Philip Plant D in Warren, Rhode Island, and the Hathaway Synthetic, Box Loom and Hom...",
-      similarity: 0.354
-    }
   ];
 
   const handleSearch = (e: React.FormEvent) => {
@@ -207,22 +139,18 @@ We anticipate that the coming year will show continued improvement in profitabil
   return (
     <div className="h-full w-full flex flex-col">
       <form onSubmit={handleSearch} className="p-3 border-b flex items-center">
-        <Input 
-          type="text" 
-          placeholder="Search documents..." 
-          value={query} 
+        <Input
+          type="text"
+          placeholder="Search documents..."
+          value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="flex-1"
         />
-        <button 
-          type="submit" 
-          className="ml-2 cursor-pointer"
-          aria-label="Search"
-        >
+        <button type="submit" className="ml-2 cursor-pointer" aria-label="Search">
           <Search className="h-5 w-5 text-gray-500" />
         </button>
       </form>
-      
+
       <ScrollArea className="flex-1">
         {!hasSearched ? (
           <div className="p-4 text-center">
@@ -230,37 +158,32 @@ We anticipate that the coming year will show continued improvement in profitabil
               Try searching for something by keyword, topic, or more. Examples include:
             </p>
             <div className="space-y-3 max-w-md mx-auto">
-              <div className="border p-4 rounded-md text-gray-500">
-                Evaluating a business
-              </div>
-              <div className="border p-4 rounded-md text-gray-500">
-                How does Berkshire think about compensation?
-              </div>
-              <div className="border p-4 rounded-md text-gray-500">
-                what were berkshire's biggest mistakes?
-              </div>
-              <div className="border p-4 rounded-md text-gray-500">
-                The story of Rose Blumkin
-              </div>
+              <div className="border p-4 rounded-md text-gray-500">Evaluating a business</div>
+              <div className="border p-4 rounded-md text-gray-500">How does Berkshire think about compensation?</div>
+              <div className="border p-4 rounded-md text-gray-500">What were Berkshire's biggest mistakes?</div>
+              <div className="border p-4 rounded-md text-gray-500">The story of Rose Blumkin</div>
             </div>
           </div>
         ) : (
           <div className="py-2">
             {searchResults.map((result) => (
-              <div 
-                key={result.id} 
+              <div
+                key={result.id}
                 className="border-b px-4 py-3 hover:bg-gray-100 cursor-pointer"
                 onClick={() => onResultClick(result)}
               >
-                <div className="text-sm text-sky-500 font-medium mb-1">{result.category}</div>
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <div className="font-medium mb-1">{result.year} {result.title}</div>
-                    <p className="text-sm text-gray-600 line-clamp-2">{result.preview}</p>
+                    <div className="font-medium mb-1">{result.title}</div>
+                    {result.preview && (
+                      <p className="text-xs text-gray-600 line-clamp-3">{result.preview}</p>
+                    )}
                   </div>
-                  <div className="bg-gray-200 rounded px-2 py-1 text-sm font-medium ml-2">
-                    {result.similarity.toFixed(3)}
-                  </div>
+                  {typeof result.similarity === "number" && (
+                    <div className="bg-green-100 rounded px-2 py-1 text-xs font-medium ml-2">
+                      {result.similarity.toFixed(3)}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "../components/Header";
@@ -6,103 +5,100 @@ import Sidebar from "../components/Sidebar";
 import ContentArea from "../components/ContentArea";
 import SearchResults from "../components/SearchResults";
 import DocumentViewer from "../components/DocumentViewer";
-
-interface SearchResult {
-  id: number;
-  year: number;
-  title: string;
-  category: string;
-  preview: string;
-  similarity: number;
-  content?: string;
-  highlightedParagraph?: string;
-}
+import { DocumentItem } from "../types/document";
 
 const Index = () => {
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [showSidebar, setShowSidebar] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeView, setActiveView] = useState<'documents' | 'search' | 'home'>('home');
-  const [selectedDocument, setSelectedDocument] = useState<SearchResult | null>(null);
+  const [activeView, setActiveView] = useState<"documents" | "search" | "home">("home");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDocument, setSelectedDocument] = useState<DocumentItem | null>(null);
   const location = useLocation();
 
-  // Reset selectedYear when the URL changes to root
   useEffect(() => {
-    if (location.pathname === '/') {
-      setSelectedYear(null);
+    if (location.pathname === "/") {
+      setSelectedDocument(null);
+      setActiveView("home");
     }
   }, [location.pathname]);
 
-  const handleYearSelect = (year: number) => {
-    setSelectedYear(year);
-    setActiveView('documents');
-    setSelectedDocument(null); // Clear any selected search result
-  };
-
   const handleSearchClick = () => {
-    setActiveView('search');
-    setSearchQuery(""); // Clear search query when switching to search view
-    setSelectedYear(null); // Clear selected year when showing search
-    setSelectedDocument(null); // Clear any selected search result
+    setActiveView("search");
+    setSearchQuery("");
+    setSelectedDocument(null);
   };
 
   const handleFileTextClick = () => {
-    setActiveView('documents');
-    setSelectedDocument(null); // Clear any selected search result
-    if (selectedYear === null) {
-      // If no year is selected, keep sidebar visible showing documents list
-      setSidebarOpen(true);
-    }
+    setActiveView("documents");
+    setSelectedDocument(null);
   };
 
   const handleHomeClick = () => {
-    setSelectedYear(null); // Reset selected year to show the main content
-    setActiveView('home');
-    setSelectedDocument(null); // Clear any selected search result
+    setActiveView("home");
+    setSelectedDocument(null);
   };
 
   const handleToggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handleSearchResultClick = (result: SearchResult) => {
+  const handleSearchResultClick = (result: DocumentItem) => {
     setSelectedDocument(result);
   };
 
+  const handleDocumentSelect = (doc: DocumentItem) => {
+    // mock API 호출
+    fetch(`/api/documents/${doc.id}/`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch mock document");
+        return res.json();
+      })
+      .then((fullDoc) => {
+        setSelectedDocument(fullDoc);
+        setActiveView("documents");
+      })
+      .catch((err) => {
+        console.error("문서 mock 데이터 불러오기 실패:", err);
+      });
+  };
+
+
   return (
     <div className="flex flex-col h-screen bg-white">
-      <Header 
-        onSearchClick={handleSearchClick} 
+      <Header
+        onSearchClick={handleSearchClick}
         onHomeClick={handleHomeClick}
         onToggleSidebar={handleToggleSidebar}
         onFileTextClick={handleFileTextClick}
         sidebarOpen={sidebarOpen}
         activeView={activeView}
       />
+
       <div className="flex flex-1 overflow-hidden">
-        <div 
-          className={`${sidebarOpen ? 'w-[233px]' : 'w-0'} border-r h-[calc(100vh-40px)] bg-gray-50 transition-all duration-300 overflow-hidden`}
+        <div
+          className={`${sidebarOpen ? "w-[233px]" : "w-0"
+            } border-r h-[calc(100vh-40px)] bg-gray-50 transition-all duration-300 overflow-hidden`}
         >
-          {activeView === 'search' ? (
-            <SearchResults 
-              isVisible={true} 
+          {activeView === "search" ? (
+            <SearchResults
+              isVisible={true}
               query={searchQuery}
               setQuery={setSearchQuery}
               onResultClick={handleSearchResultClick}
             />
           ) : (
-            <Sidebar onYearSelect={handleYearSelect} />
+            <Sidebar onDocumentSelect={handleDocumentSelect} />
           )}
         </div>
+
         <div className="flex-1 overflow-hidden">
           {selectedDocument ? (
             <DocumentViewer document={selectedDocument} />
+          ) : activeView === "home" ? (
+            <ContentArea sidebarOpen={sidebarOpen} />
           ) : (
-            <ContentArea 
-              selectedYear={selectedYear} 
-              sidebarOpen={sidebarOpen}
-            />
+            <div className="flex items-center justify-center h-full text-gray-400">
+              Select a document from the sidebar
+            </div>
           )}
         </div>
       </div>
